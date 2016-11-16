@@ -18,7 +18,7 @@ install:
 script: nosetests
 
 before_deploy:
-  - zip -r TeamBash_UI.zip core/UI/SampleWeb scripts appspec.yml || true
+  - zip -r TeamBash_UI.zip core/UI/SampleWeb scripts appspec.yml Dockerfile || true
   - mkdir -p "UI_upload"
   - mv TeamBash_UI.zip UI_upload/TeamBash_UI.zip || true
 
