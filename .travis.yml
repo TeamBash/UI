@@ -4,7 +4,7 @@ python:
   - 3.4
 branches:
   only:
-    - develop
+    - master
 
 notifications:
   slack: teambash-iu:Kumv5imwDciZcFQ2KvvUHIje
@@ -29,7 +29,7 @@ deploy:
     acl: public_read
     detect_encoding: true
     on:
-      branch: develop
+      branch: master
 
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
@@ -41,4 +41,4 @@ deploy:
     deployment_group: TeamBash-Test
     region: us-west-2
     on:
-      branch: develop
+      branch: master
