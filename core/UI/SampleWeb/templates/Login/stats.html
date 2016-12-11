@@ -2,15 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Log Status</title>
 </head>
 <body>
-<label for="exampleSelect1">Log Status:
-    <ul>
-        {% for item in content%}
-            <li> {{item}}</li>
+<table border ='1' width="45%">
+
+ {% for key in weather_data.0 %}
+         <th>{{key}}</th>
+    {% endfor %}
+{% for dict in weather_data %}
+    <tr>
+        {% for key,val in dict.items %}
+            <td>{{val}}</td>
         {% endfor %}
-    </ul>
-</label>
+
+    </tr>
+{% endfor %}
+</table>
 </body>
 </html>

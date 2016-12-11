@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^home/', 'Login.views.start_here', name='start_here'),
     url(r'', include('social.apps.django_app.urls', namespace='social')),
-    url(r'^home/', 'Login.views.start_here', name='start_here'),
+#   url(r'^home/', 'Login.views.start_here', name='start_here'),
     url(r'^log/', include('Login.urls', namespace="Login")),
     url(r'disconnect/(?P<backend>[^/]+)/$', 'Login.views.disconnect', name='disconnect'),
     #url('complete/google-oauth2/', views.home, name="home"),

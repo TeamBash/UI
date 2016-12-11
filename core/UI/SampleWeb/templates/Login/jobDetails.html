@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Status</title>
+</head>
+<body>
+<table border ='1' width="75%">
+
+ {% for key in weather_data.0 %}
+         <th>{{key}}</th>
+    {% endfor %}
+
+{% for dict in weather_data %}
+    <tr>
+        {% with items=dict.items %}
+            <td>{{items.0.1}}</td>
+            <td>
+                <ul>
+                    {% for link in items.1.1 %}
+                        <li><a href = "{{link}}">{{link}}</a></li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>{{items.2.1}}</td>
+        {% endwith %}
+
+    </tr>
+{% endfor %}
+</table>
+</body>
+</html>

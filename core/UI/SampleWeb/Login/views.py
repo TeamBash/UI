@@ -10,116 +10,15 @@ import urllib
 import urllib2
 import json
 from django.contrib.auth import logout
+from django.shortcuts import redirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
 #for keeping track of the user
-global userid
-def login(request):
-    context = RequestContext(request, {'request': request, 'user': request.user})
-    return render_to_response('Login/login.html', context_instance=context)
+userid=None
 
-def start_here(request):
-    return render_to_response('SampleWeb/home.html', context_instance={})
 
-def home(request):
-    context = RequestContext(request, {'request': request, 'user': request.user})
-    return render_to_response('Login/weatherForm.html',context_instance=context)
-
-def disconnect(request):
-    logout(request)
-
-def logout(request):
-    auth_logout(request)
-    return redirect('/')
-
-def login(request) :
-    return render(request, 'Login/login.html', {})
-
-def setUid(uid):
-    print("SET IS ALREADY TAKEN")
-    global userid
-    userid = uid
-
-def getUid():
-    return userid
-
-def loginAPI(request):
-    h = httplib2.Http()
-    context = {
-        "useremail" : str(request.user.email),
-    }
-    resp, content = h.request(
-        uri='http://52.25.123.69:8888/createUser',
-        method='POST',
-        headers={'Content-Type': 'application/json; charset=UTF-8'},
-        body=json.dumps(request.user.email),
-    )
-    if resp['status'] == '401':
-        return render(request, 'Login/401.html', {})
-    #userid = content
-    setUid(content)
-    #return redirect('Login:weatherForm',userid)
-    return weatherForm(request,content)
-
-def weatherForm(request,uid):
-    setUid(uid)
-
-    stationList1 = ['Albany, NY', 'Albuquerque, NM', 'Amarillo, TX', 'Anchorage/Kenai, AK', 'Andersen AFB, Guam', 'Atlanta, GA', 'Beale AFB, CA', 'Bethel, AK', 'Billings, MT', 'Binghamton, NY', 'Biorka Island/Sitka, AK', 'Birmingham, AL', 'Bismarck, ND', 'Blacksburg, VA', 'Boston, MA', 'Brownsville, TX', 'Buffalo, NY', 'Burlington, VT', 'Cannon AFB, NM', 'Caribou, ME', 'Cedar City, UT', 'Charleston, SC', 'Charleston, WV', 'Cheyenne, WY', 'Chicago, IL', 'Cincinnati/Wilmington, OH', 'Cleveland, OH', 'Columbia, SC', 'Columbus AFB, MS', 'Corpus Christi, TX', 'Denver, CO', 'Des Moines IA', 'Detroit, MI', 'Dodge City, KS', 'Dover AFB, DE', 'Duluth, MN', 'Dyess AFB, TX', 'Edwards AFB, CA', 'El Paso, TX', 'Eureka, CA', 'Evansville, IN', 'Fairbanks/Pedro Dome, AK', 'Flagstaff, AZ', 'Fort Smith, AR', 'Frederick/Altus AFB, OK', 'Ft Campbell, KY', 'Ft Rucker, AL', 'Ft Worth, TX', 'Gaylord, MI', 'Glasgow, MT', 'Goodland, KS', 'Grand Forks, ND', 'Grand Junction, CO', 'Grand Rapids, MI', 'Great Falls, MT', 'Green Bay, WI', 'Greer, SC', 'Hastings, NE', 'Holloman AFB, NM', 'Houston, TX', 'Huntsville/Hytop, AL', 'Indianapolis, IN', 'Jackson, KY', 'Jackson, MS', 'Kamuela/Kohala, HI', 'Kansas City, MO', 'Key West, FL', 'King Salmon, AK', 'Knoxville/Morristown, TN', 'La Crosse, WI', 'Lake Charles, LA', 'Las Vegas, NV', 'Laughlin AFB, TX', 'Lincoln, IL', 'Little Rock, AR', 'Los Angeles, CA', 'Louisville, KY', 'Lubbock, TX', 'Marquette, MI', 'Maxwell AFB, AL', 'Medford, OR', 'Melbourne, FL', 'Memphis, TN', 'Miami, FL', 'Middleton Island, AK', 'Midland/Odessa, TX', 'Milwaukee, WI', 'Minneapolis, MN', 'Minot AFB, ND', 'Mobile, AL', 'Molokai, HI', 'Montague/Ft Drum, NY', 'Moody AFB, GA', 'Morehead City, NC', 'Nashville, TN', 'New Orleans, LA', 'Nome, AK', 'North Platte, NE', 'Northern Indiana/North Webster, IN', 'Northwest Florida/Eglin AFB, FL', 'Oklahoma City, OK', 'Omaha, NE', 'Paducah, KY', 'Pendleton, OR', 'Philadelphia, PA', 'Phoenix, AZ', 'Pittsburgh, PA', 'Pocatello, ID', 'Portland, ME', 'Portland, OR', 'Pueblo, CO', 'Quad Cities/Davenport, IA', 'Raleigh/Durham, NC', 'Rapid City, SD', 'Riverton, WY', 'Robins AFB, GA', 'Sacramento, CA', 'Salt Lake City, UT', 'San Angelo, TX', 'San Antonio, TX', 'San Diego, CA', 'San Joaquin Valley, CA', 'San Juan, PR', 'Santa Ana Mountains, CA', 'Seattle, WA', 'Shreveport, LA', 'Sioux Falls, SD', 'South Kauai, HI', 'South Shore, HI', 'Spokane, WA', 'Springfield, MO', 'St Louis, MO', 'State College, PA', 'Sterling, VA', 'Tallahassee, FL', 'Tampa Bay, FL', 'Topeka, KS', 'Tucson, AZ', 'Tulsa, OK', 'Vandenberg AFB, CA', 'Wakefield, VA', 'Wichita, KS', 'Wilmington, NC', 'Yuma, AZ']
-    stationList =['KABR','KENX', 'KABX', 'KAMA', 'PAHG', 'PGUA', 'KFFC', 'KBBX', 'PABC', 'FAA', 'KBLX', 'KBGM', 'PACG', 'KBMX', 'KBIS',
-     'NWS', 'KFCX', 'KBOX', 'KBRO', 'KBUF', 'KCXX', 'KFDX', 'KCBW', 'KICX', 'KCLX', 'KRLX', 'KCYS', 'KLOT', 'KILN',
-     'KCLE', 'KCAE', 'KGWX', 'KCRP', 'KFTG', 'KDMX', 'KDTX', 'KDDC', 'KDOX', 'KDLH', 'KDYX', 'KEYX', 'KEPZ', 'KBHX',
-     'KVWX', 'PAPD', 'FAA', 'KFSX', 'KSRX', 'KFDR', 'KHPX', 'KEOX', 'KFWS', 'KAPX', 'KGGW', 'KGLD', 'KMVX', 'KGJX',
-     'KGRR', 'KTFX', 'KGRB', 'KGSP', 'KUEX', 'KHDX', 'KHGX', 'KHTX', 'KIND', 'KJKL', 'KDGX', 'PHKM', 'KEAX', 'KBYX',
-     'PAKC', 'KMRX', 'KARX', 'KLCH', 'KESX', 'KDFX', 'KILX', 'KLZK', 'KVTX', 'KLVX', 'KLBB', 'KMQT', 'KMXX', 'KMAX',
-     'KMLB', 'KNQA', 'KAMX', 'PAIH', 'FAA', 'KMAF', 'KMKX', 'KMPX', 'KMBX', 'KMOB', 'PHMO', 'KTYX', 'KVAX', 'KMHX',
-     'KOHX', 'KLIX', 'PAEC', 'FAA', 'KLNX', 'KIWX', 'KEVX', 'KTLX', 'KOAX', 'KPAH', 'KPDT', 'KDIX', 'KIWA', 'KPBZ',
-     'KSFX', 'KGYX', 'KRTX', 'KPUX', 'KDVN', 'KRAX', 'KUDX', 'KRIW', 'KJGX', 'KDAX', 'KMTX', 'KSJT', 'NWS', 'KEWX',
-     'KNKX', 'KHNX', 'TJUA', 'FAA', 'KSOX', 'KATX', 'KSHV', 'KFSD', 'PHKI', 'FAA', 'PHWA', 'KOTX', 'KSGF', 'KLSX',
-     'KCCX', 'KLWX', 'KTLH', 'KTBW', 'KTWX', 'KEMX', 'KINX', 'KVBX', 'KAKQ', 'KICT', 'KLTX', 'KYUX']
-    day =[]
-    for i in range(1,31):
-        if i<10:
-            day.append('0'+str(i))
-        else:
-            day.append(str(i))
-    h = httplib2.Http()
-    context = {
-        "useremail": str(request.user.email),
-    }
-    resp, content = h.request(
-        # uri='http://52.25.123.69:8888/loginUser',
-        uri='http://52.25.123.69:8888/createUser',
-        method='POST',
-        headers={'Content-Type': 'application/json; charset=UTF-8'},
-        body=json.dumps(request.user.email),
-    )
-    if resp['status'] == '401':
-        return render(request, 'Login/401.html', {})
-    return render(request, 'Login/weatherForm.html', {'year' : range(1991,2017), 'day':day , 'station':stationList1})
-
-def getStats(request):
-    #body = urllib.urlencode(context)
-    h = httplib2.Http()
-    resp, content = h.request("http://52.25.123.69:8888/registry/displayData/"+str(userid), method="GET")
-    #print(content,"this is it")
-    return render(request, 'Login/stats.html', {'content':content})
-
-def hit(request):
-    global userid
-    h = httplib2.Http()
-    context = {
-        "useremail": str(request.user.email),
-    }
-    resp, content = h.request(
-        # uri='http://52.25.123.69:8888/loginUser',
-        uri='http://52.25.123.69:8888/createUser',
-        method='POST',
-        headers={'Content-Type': 'application/json; charset=UTF-8'},
-        body=json.dumps(request.user.email),
-    )
-    if resp['status'] == '401':
-        return render(request, 'Login/401.html', {})
-    userid = content
-    print("FALSEI"*10,userid)
-    stationCodeDict = {'Aberdeen, SD ': 'KVBX', 'Tulsa, OK': 'KSGF', 'Milwaukee, WI': 'KAMX',
+stationCodeDict = {'Aberdeen, SD ': 'KVBX', 'Tulsa, OK': 'KSGF', 'Milwaukee, WI': 'KAMX',
                        'Columbus AFB, MS': 'KCLE', 'Rapid City, SD': 'KGYX',
                        'El Paso, TX': 'KDYX', 'Bismarck, ND': 'KBMX', 'Caribou, ME': 'KCXX', 'Sioux Falls, SD': 'KNKX',
                        'Paducah, KY': 'KLNX', 'San Joaquin Valley, CA': 'KDAX', 'Amarillo, TX': 'KAMA',
@@ -181,6 +80,161 @@ def hit(request):
                        'Chicago, IL': 'KRLX', 'Portland, ME': 'KPDT', 'South Shore, HI': 'TJUA',
                        'Huntsville/Hytop, AL': 'KUEX',
                        'Beale AFB, CA': 'KBBX', 'Grand Forks, ND': 'KAPX'}
+
+stationList1 = ['Albany, NY', 'Albuquerque, NM', 'Amarillo, TX', 'Anchorage/Kenai, AK', 'Andersen AFB, Guam',
+                'Atlanta, GA', 'Beale AFB, CA', 'Bethel, AK', 'Billings, MT', 'Binghamton, NY',
+                'Biorka Island/Sitka, AK', 'Birmingham, AL', 'Bismarck, ND', 'Blacksburg, VA', 'Boston, MA',
+                'Brownsville, TX', 'Buffalo, NY', 'Burlington, VT', 'Cannon AFB, NM', 'Caribou, ME', 'Cedar City, UT',
+                'Charleston, SC', 'Charleston, WV', 'Cheyenne, WY', 'Chicago, IL', 'Cincinnati/Wilmington, OH',
+                'Cleveland, OH', 'Columbia, SC', 'Columbus AFB, MS', 'Corpus Christi, TX', 'Denver, CO',
+                'Des Moines IA', 'Detroit, MI', 'Dodge City, KS', 'Dover AFB, DE', 'Duluth, MN', 'Dyess AFB, TX',
+                'Edwards AFB, CA', 'El Paso, TX', 'Eureka, CA', 'Evansville, IN', 'Fairbanks/Pedro Dome, AK',
+                'Flagstaff, AZ', 'Fort Smith, AR', 'Frederick/Altus AFB, OK', 'Ft Campbell, KY', 'Ft Rucker, AL',
+                'Ft Worth, TX', 'Gaylord, MI', 'Glasgow, MT', 'Goodland, KS', 'Grand Forks, ND', 'Grand Junction, CO',
+                'Grand Rapids, MI', 'Great Falls, MT', 'Green Bay, WI', 'Greer, SC', 'Hastings, NE', 'Holloman AFB, NM',
+                'Houston, TX', 'Huntsville/Hytop, AL', 'Indianapolis, IN', 'Jackson, KY', 'Jackson, MS',
+                'Kamuela/Kohala, HI', 'Kansas City, MO', 'Key West, FL', 'King Salmon, AK', 'Knoxville/Morristown, TN',
+                'La Crosse, WI', 'Lake Charles, LA', 'Las Vegas, NV', 'Laughlin AFB, TX', 'Lincoln, IL',
+                'Little Rock, AR', 'Los Angeles, CA', 'Louisville, KY', 'Lubbock, TX', 'Marquette, MI',
+                'Maxwell AFB, AL', 'Medford, OR', 'Melbourne, FL', 'Memphis, TN', 'Miami, FL', 'Middleton Island, AK',
+                'Midland/Odessa, TX', 'Milwaukee, WI', 'Minneapolis, MN', 'Minot AFB, ND', 'Mobile, AL', 'Molokai, HI',
+                'Montague/Ft Drum, NY', 'Moody AFB, GA', 'Morehead City, NC', 'Nashville, TN', 'New Orleans, LA',
+                'Nome, AK', 'North Platte, NE', 'Northern Indiana/North Webster, IN', 'Northwest Florida/Eglin AFB, FL',
+                'Oklahoma City, OK', 'Omaha, NE', 'Paducah, KY', 'Pendleton, OR', 'Philadelphia, PA', 'Phoenix, AZ',
+                'Pittsburgh, PA', 'Pocatello, ID', 'Portland, ME', 'Portland, OR', 'Pueblo, CO',
+                'Quad Cities/Davenport, IA', 'Raleigh/Durham, NC', 'Rapid City, SD', 'Riverton, WY', 'Robins AFB, GA',
+                'Sacramento, CA', 'Salt Lake City, UT', 'San Angelo, TX', 'San Antonio, TX', 'San Diego, CA',
+                'San Joaquin Valley, CA', 'San Juan, PR', 'Santa Ana Mountains, CA', 'Seattle, WA', 'Shreveport, LA',
+                'Sioux Falls, SD', 'South Kauai, HI', 'South Shore, HI', 'Spokane, WA', 'Springfield, MO',
+                'St Louis, MO', 'State College, PA', 'Sterling, VA', 'Tallahassee, FL', 'Tampa Bay, FL', 'Topeka, KS',
+                'Tucson, AZ', 'Tulsa, OK', 'Vandenberg AFB, CA', 'Wakefield, VA', 'Wichita, KS', 'Wilmington, NC',
+                'Yuma, AZ']
+stationList = ['KABR', 'KENX', 'KABX', 'KAMA', 'PAHG', 'PGUA', 'KFFC', 'KBBX', 'PABC', 'FAA', 'KBLX', 'KBGM', 'PACG',
+               'KBMX', 'KBIS',
+               'NWS', 'KFCX', 'KBOX', 'KBRO', 'KBUF', 'KCXX', 'KFDX', 'KCBW', 'KICX', 'KCLX', 'KRLX', 'KCYS', 'KLOT',
+               'KILN',
+               'KCLE', 'KCAE', 'KGWX', 'KCRP', 'KFTG', 'KDMX', 'KDTX', 'KDDC', 'KDOX', 'KDLH', 'KDYX', 'KEYX', 'KEPZ',
+               'KBHX',
+               'KVWX', 'PAPD', 'FAA', 'KFSX', 'KSRX', 'KFDR', 'KHPX', 'KEOX', 'KFWS', 'KAPX', 'KGGW', 'KGLD', 'KMVX',
+               'KGJX',
+               'KGRR', 'KTFX', 'KGRB', 'KGSP', 'KUEX', 'KHDX', 'KHGX', 'KHTX', 'KIND', 'KJKL', 'KDGX', 'PHKM', 'KEAX',
+               'KBYX',
+               'PAKC', 'KMRX', 'KARX', 'KLCH', 'KESX', 'KDFX', 'KILX', 'KLZK', 'KVTX', 'KLVX', 'KLBB', 'KMQT', 'KMXX',
+               'KMAX',
+               'KMLB', 'KNQA', 'KAMX', 'PAIH', 'FAA', 'KMAF', 'KMKX', 'KMPX', 'KMBX', 'KMOB', 'PHMO', 'KTYX', 'KVAX',
+               'KMHX',
+               'KOHX', 'KLIX', 'PAEC', 'FAA', 'KLNX', 'KIWX', 'KEVX', 'KTLX', 'KOAX', 'KPAH', 'KPDT', 'KDIX', 'KIWA',
+               'KPBZ',
+               'KSFX', 'KGYX', 'KRTX', 'KPUX', 'KDVN', 'KRAX', 'KUDX', 'KRIW', 'KJGX', 'KDAX', 'KMTX', 'KSJT', 'NWS',
+               'KEWX',
+               'KNKX', 'KHNX', 'TJUA', 'FAA', 'KSOX', 'KATX', 'KSHV', 'KFSD', 'PHKI', 'FAA', 'PHWA', 'KOTX', 'KSGF',
+               'KLSX',
+               'KCCX', 'KLWX', 'KTLH', 'KTBW', 'KTWX', 'KEMX', 'KINX', 'KVBX', 'KAKQ', 'KICT', 'KLTX', 'KYUX']
+
+
+def login(request):
+    context = RequestContext(request, {'request': request, 'user': request.user})
+    return render_to_response('Login/login.html', context_instance=context)
+
+def start_here(request):
+    return render_to_response('SampleWeb/home.html', context_instance={})
+
+def home(request):
+    context = RequestContext(request, {'request': request, 'user': request.user})
+    return render_to_response('Login/weatherForm.html',context_instance=context)
+
+def disconnect(request):
+    logout(request)
+
+def logout(request):
+    auth_logout(request)
+    return redirect('/')
+
+def login(request) :
+    return render(request, 'Login/login.html', {})
+
+def setUid(uid):
+    print("SET IS ALREADY TAKEN")
+    global userid
+    userid = uid
+
+def getUid():
+    return userid
+
+def loginAPI(request):
+    print("I am scre")
+    h = httplib2.Http()
+    context = {
+        "useremail" : str(request.user.email),
+    }
+    resp, content = h.request(
+        uri='http://52.25.123.69:8888/createUser',
+        method='POST',
+        headers={'Content-Type': 'application/json; charset=UTF-8'},
+        body=json.dumps(request.user.email),
+    )
+    if resp['status'] == '401':
+        return render(request, 'Login/401.html', {})
+    #userid = content
+    setUid(content)
+
+    return redirect('Login:weatherForm')
+    #return weatherForm(request)
+
+def weatherForm(request, context={}):
+    global userid
+
+    if not userid:
+        return redirect('start_here')
+    print("sdfsfsfdsdf")
+
+    day =[]
+    for i in range(1,31):
+        if i<10:
+            day.append('0'+str(i))
+        else:
+            day.append(str(i))
+    h = httplib2.Http()
+    #context{
+    #    "useremail": str(request.user.email),
+    #}
+    resp, content = h.request(
+        # uri='http://52.25.123.69:8888/loginUser',
+        uri='http://52.25.123.69:8888/createUser',
+        method='POST',
+        headers={'Content-Type': 'application/json; charset=UTF-8'},
+        body=json.dumps(request.user.email),
+    )
+    if resp['status'] == '401':
+        return render(request, 'Login/401.html', {})
+
+    context.update({'year' : range(1991,2017), 'day':day , 'station':stationList1})
+    return render(request, 'Login/weatherForm.html', context=context)
+
+
+def hit(request):
+    global userid
+    h = httplib2.Http()
+    context = {
+        "useremail": str(request.user.email),
+    }
+    resp, content = h.request(
+        # uri='http://52.25.123.69:8888/loginUser',
+        uri='http://52.25.123.69:8888/createUser',
+        method='POST',
+        headers={'Content-Type': 'application/json; charset=UTF-8'},
+        body=json.dumps(request.user.email),
+    )
+    if resp['status'] == '401':
+        return render(request, 'Login/401.html', {})
+    userid = content
+    print("FALSEI"*10,userid)
+    day=[]
+    for i in range(1, 31):
+        if i < 10:
+            day.append('0' + str(i))
+        else:
+            day.append(str(i))
     stationCode =''
     if request.method == 'POST':
         print(request.POST)
@@ -189,7 +243,9 @@ def hit(request):
                 stationCode = stationCodeDict[key]
                 break
         h = httplib2.Http()
+        print("about to request")
         response, content= h.request("http://52.25.123.69:8888/dataIngestor/"+str(userid)+"/"+str(request.POST['year'])+'/'+str(request.POST['month'])+'/'+str(request.POST['day'])+'/'+stationCode+'/')
+        print(response)
         if content == 'false':
             return render(request, 'Login/falseForecast.html')
         elif response['status']=='206':
@@ -199,12 +255,27 @@ def hit(request):
         elif response['status'] == '500':
             return render(request, 'Login/500.html')
         else:
-            return render(request, 'Login/Result.html')
-
+            #return render(request, 'Login/weatherForm.html', context={'picture' : response})
+            return render(request, 'Login/weatherForm.html', context = {'year' : range(1991,2017), 'day':day , 'station':stationList1, "content":"Job Created!!!", 'show_button':True})
+            #return redirect('weatherForm')
+            #return HttpResponseRedirect(reverse('Login:weatherForm', args=(userid,)))
 def result(request):
     if '404' in request.body:
         return render(request, 'Login/404.html',)
     else:
         return render(request, 'Login/Result.html' )
 
+def getStats(request):
+    #body = urllib.urlencode(context)
+    h = httplib2.Http()
+    #context = {'content': {'jobname': []} }
 
+    resp, content = h.request("http://52.25.123.69:8888/registry/displayData/"+str(userid), method="GET")
+    content= {'weather_data':json.loads(content), 'hello':'world'}
+    return render(request, 'Login/stats.html', context=content)
+
+def getJob(request):
+    h = httplib2.Http()
+    response, content = h.request("http://52.25.123.69:8888/getJobDetails/"+str(userid), method="GET")
+    content = {'weather_data': json.loads(content), 'hello': 'world'}
+    return render(request, 'Login/jobDetails.html', context=content)

@@ -12,5 +12,6 @@ urlpatterns = [
     url('getStats', views.getStats, name = "getStats"),
     url('start_here', views.start_here, name = "start_here"),
     url('result', views.result, name="result"),
+    url('getJob', views.getJob, name="getJob"),
    # url('disconnect/(?P<backend>[^/]+)/$', views.disconnect, name='disconnect'),
 ]
