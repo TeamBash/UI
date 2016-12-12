@@ -5,27 +5,34 @@
     <title>Job Status</title>
 </head>
 <body>
+{{weather_data.1}}
 <table border ='1' width="75%">
-
  {% for key in weather_data.0 %}
          <th>{{key}}</th>
-    {% endfor %}
+ {% endfor %}
+         <th>Restart</th>
 
-{% for dict in weather_data %}
-    <tr>
-        {% with items=dict.items %}
-            <td>{{items.0.1}}</td>
-            <td>
-                <ul>
-                    {% for link in items.1.1 %}
-                        <li><a href = "{{link}}">{{link}}</a></li>
-                    {% endfor %}
-                </ul>
-            </td>
-            <td>{{items.2.1}}</td>
-        {% endwith %}
-
-    </tr>
+{% for dic in weather_data %}
+    {% with items=dic.items %}
+        <tr>
+            {% for item in items.0.1 %}
+                {% with lst_tuple=item.items %}
+                    <td>
+                        {{lst_tuple.0.1}}
+                        {% for links in lst_tuple.1.1 %}
+                            <ul>
+                                <li>
+                                    <a href = "{{ links }}">{{ links }}</a>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    </td>
+                {% endwith %}
+            {% endfor %}
+            <td>{{items.1.1 }}</td>
+            <td><a href ="{% url 'Login:restart' %}?job_name={{items.2.1}}">Restart</a></td>
+        </tr>
+    {% endwith %}
 {% endfor %}
 </table>
 </body>

@@ -9,6 +9,7 @@ import httplib
 import urllib
 import urllib2
 import json
+import copy
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
@@ -276,6 +277,24 @@ def getStats(request):
 
 def getJob(request):
     h = httplib2.Http()
-    response, content = h.request("http://52.25.123.69:8888/getJobDetails/"+str(userid), method="GET")
+
+    response, content = h.request("http://52.25.123.69:8888/jobsapi/getJobDetails/"+str(userid), method="GET")
+    print(type(json.loads(content)))
     content = {'weather_data': json.loads(content), 'hello': 'world'}
+
     return render(request, 'Login/jobDetails.html', context=content)
+
+def restart(request):
+    h = httplib2.Http()
+    #print("REACHESresp")
+    # context = {'content': {'jobname': []} }
+    if request.method == 'GET':
+        job_name = request.GET['job_name']
+        #request.POST = {'job_name': job_name}
+        request.GET = {}
+        print("REACHESresp",job_name)
+        print("http://52.25.123.69:8888/jobsapi/restartJob/"+str(userid)+"/")
+        #resp, content = h.request("http://52.25.123.69:8888/jobsapi/restartJob/"+str(userid)+"/", method="POST")
+        resp, content = h.request("http://52.25.123.69:8888/jobsapi/restartJob/" + str(userid) + "/"+job_name+"/", method="GET")
+    print(resp)
+    return redirect('Login:getJob')
