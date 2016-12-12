@@ -6,34 +6,32 @@
 </head>
 <body>
 
-<table border ='1' width="75%">
- {% for key in weather_data.0 %}
-         <th>{{key}}</th>
- {% endfor %}
-         <th>Restart</th>
 
-{% for dic in weather_data %}
-    {% with items=dic.items %}
-        <tr>
-            {% for item in items.0.1 %}
-                {% with lst_tuple=item.items %}
-                    <td>
-                        {{lst_tuple.0.1}}
-                        {% for links in lst_tuple.1.1 %}
-                            <ul>
-                                <li>
-                                    <a href = "{{ links }}">{{ links }}</a>
-                                </li>
-                            </ul>
-                        {% endfor %}
-                    </td>
-                {% endwith %}
-            {% endfor %}
-            <td>{{items.1.1 }}</td>
-            <td><a href ="{% url 'Login:restart' %}?job_name={{items.2.1}}">Restart</a></td>
-        </tr>
-    {% endwith %}
+<table border ='1' width="75%">
+<th>Schedule Status</th><th>Job Name</th><th>Restart</th>
+{% for task in tasks %}
+    <tr>
+    <td>
+        {% for tuple in task.tasks %}
+            {{ tuple.0 }}
+            <ul>
+                {% for link in tuple.1 %}
+                    <li>
+                        <a href="{{link}}">{{link}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </td>
+    <td>
+        {{task.job_name}}
+    </td>
+     <td>
+         <a href ="{% url 'Login:restart' %}?job_name={{task.job_name}}">Restart</a>
+     </td>
+    </tr>
 {% endfor %}
+
 </table>
 </body>
 </html>

@@ -276,11 +276,26 @@ def getStats(request):
     return render(request, 'Login/stats.html', context=content)
 
 def getJob(request):
+    class Task:
+        def __init__(self):
+            self.tasks = [] # list of tuples, tuple[0] is status, tuple[1] is a list of urls
+            self.job_name = None
+
+
     h = httplib2.Http()
+    task_objects = []
 
     response, content = h.request("http://52.25.123.69:8888/jobsapi/getJobDetails/"+str(userid), method="GET")
-    print(type(json.loads(content)))
-    content = {'weather_data': json.loads(content), 'hello': 'world'}
+    loaded = json.loads(content)
+    for dic in loaded:
+        task = Task()
+        task.job_name = dic['jobName']
+        list_dics = dic['taskResultsBeans']
+        for result_dic in list_dics:
+            task.tasks.append((result_dic['scheduleStatus'], result_dic['imageUrls']))
+        task_objects.append(task)
+
+    content = {'tasks': task_objects, 'hello': 'world'}
 
     return render(request, 'Login/jobDetails.html', context=content)
 
